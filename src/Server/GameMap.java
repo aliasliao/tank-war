@@ -8,11 +8,11 @@ import java.util.ArrayList;
  */
 public class GameMap {
 
-    private ArrayList<Bullet> bullets;
-    private ArrayList<Wall> walls;
-    private ArrayList<Zombie> zombies;
     private Tank tank1;
     private Tank tank2;
+    private ArrayList<Zombie> zombies;
+    private ArrayList<Bullet> bullets;
+    private ArrayList<Wall> walls;
 
     public GameMap() {
 
