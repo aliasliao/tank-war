@@ -7,13 +7,25 @@ import java.io.Serializable;
  */
 public class Frame implements Serializable {
 
-    class Coordinate {
+    enum Direction { UP, DOWN, LEFT, RIGHT }
+
+    enum WallType { WEAK, STRONG }
+
+    class MoveObject {
         int x;
         int y;
+        Direction direction;
     }
 
-    Coordinate tank1;
-    Coordinate tank2;
-    Coordinate[] bullets;
-    Coordinate[] walls;
+    class Wall {
+        int x;
+        int y;
+        WallType type;
+    }
+
+    MoveObject tank1;
+    MoveObject tank2;
+    MoveObject[] zombies;
+    MoveObject[] bullets;
+    Wall[] walls;
 }

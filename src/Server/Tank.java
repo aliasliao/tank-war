@@ -3,21 +3,13 @@ package Server;
 import javax.swing.ImageIcon;
 
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.util.HashMap;
 
 /**
  * Created by liao on 2016/12/27.
  */
-public class Tank {
+public class Tank extends MoveEntity {
 
-    private int x;
-    private int y;
-    private int width;
-    private int height;
-
-    private  Direction direction;
-    private int speed; // >=0
     private GameMap map;
     private HashMap<Direction, Image> imageMap;
 
@@ -60,7 +52,7 @@ public class Tank {
 
     public void move() { // each frame
 
-        boolean go = !map.isWall(getBounds(), direction);
+        boolean go = !map.isBlocked(this);
 
         if (go) {
             switch (direction) {
@@ -96,8 +88,6 @@ public class Tank {
         }
         map.addBullet(new Bullet(bx, by, direction));
     }
-
-    public Rectangle getBounds() { return new Rectangle(x, y, width, height); }
 
     public void keyPressed(KeyCode key) {
 
