@@ -1,9 +1,9 @@
-package Server;
+package Client;
 
 import java.io.Serializable;
 
 /**
- * Created by liao on 2016/12/28.
+ * Created by liao on 2016/12/31.
  */
 class Frame implements Serializable {
 

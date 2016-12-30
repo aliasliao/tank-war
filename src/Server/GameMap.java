@@ -43,7 +43,7 @@ public class GameMap implements Runnable {
         zombies.add(new Zombie(120, 120, Direction.DOWN, this));
         zombies.add(new Zombie(400, 400, Direction.DOWN, this));
 
-        connection = new Connection();
+        connection = new Connection(this);
         output1 = connection.getOutput1();
         output2 = connection.getOutput2();
 
@@ -111,11 +111,9 @@ public class GameMap implements Runnable {
             if (bound.intersects(r) && !bound.equals(r))
                 return true;
         }
-        if (entity.getX()<0 || entity.getX()+entity.getWidth()>MAP_X
-                || entity.getY()<0 || entity.getY()+entity.getHeight()>MAP_Y)
-            return true;
+        return entity.getX() < 0 || entity.getX() + entity.getWidth() > MAP_X
+                || entity.getY() < 0 || entity.getY() + entity.getHeight() > MAP_Y;
 
-        return false;
     }
 
     public void handleKey1(KeySignal key) {
@@ -166,6 +164,7 @@ public class GameMap implements Runnable {
             inGame();
             moveObject();
             handleCollisons();
+            sendFrame();
 
             timeDiff = System.currentTimeMillis() - beforeTime;
             sleep = INTERVAL - timeDiff;
@@ -184,5 +183,28 @@ public class GameMap implements Runnable {
 
     private void sendFrame() {
 
+        Frame frame = new Frame(zombies.size(), bullets.size(), walls.size());
+
+        frame.tank1.init(tank1.getX(), tank1.getY(), Frame.Direction.valueOf(tank1.getDirection().toString()));
+        frame.tank2.init(tank2.getX(), tank2.getY(), Frame.Direction.valueOf(tank2.getDirection().toString()));
+        for (int i=0; i<zombies.size(); i++) {
+            Zombie z = zombies.get(i);
+            frame.zombies[i].init(z.getX(), z.getY(), Frame.Direction.valueOf(z.getDirection().toString()));
+        }
+        for (int i=0; i<bullets.size(); i++) {
+            Bullet b = bullets.get(i);
+            frame.bullets[i].init(b.getX(), b.getY(), Frame.Direction.valueOf(b.getDirection().toString()));
+        }
+        for (int i=0; i<walls.size(); i++) {
+            Wall w = walls.get(i);
+            frame.walls[i].init(w.getX(), w.getY(), Frame.WallType.valueOf(w.getType().toString()));
+        }
+
+        try {
+            output1.writeObject(frame);
+            output2.writeObject(frame);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,7 +1,5 @@
 package Server;
 
-import org.omg.PortableServer.THREAD_POLICY_ID;
-
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -18,11 +16,14 @@ public class Connection {
     private ObjectOutputStream output1, output2;
     private GameMap map;
 
-    public Connection() {
+    public Connection(GameMap map) {
+
+        this.map = map;
 
         try {
             ServerSocket serverSocket = new ServerSocket(port, backlog);
 
+            System.out.println("Waiting for player 1...");
             Socket clientSocket1 = serverSocket.accept();
             System.out.println("Player 1 is connected!");
             input1 = new ObjectInputStream(clientSocket1.getInputStream());
@@ -30,6 +31,7 @@ public class Connection {
             Thread client1 = new Thread(new Task1(input1));
             client1.start();
 
+            System.out.println("Waiting for player 2...");
             Socket clientSocket2 = serverSocket.accept();
             System.out.println("Player 2 is connected!");
             input2 = new ObjectInputStream(clientSocket2.getInputStream());
