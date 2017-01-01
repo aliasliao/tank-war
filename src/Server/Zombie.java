@@ -12,7 +12,7 @@ public class Zombie extends MoveEntity {
 
     private GameMap map;
     private HashMap<Direction, Image> imageMap;
-    private final int fireSpeed = 20; // dps=40/fs
+    private final int fireSpeed = 40; // dps=40/fs
     private int count = 0;
 
     public Zombie(int x, int y, Direction direction, GameMap map) {
@@ -56,24 +56,31 @@ public class Zombie extends MoveEntity {
     public void fire() {
 
         int bx = x, by = y;
+        Bullet newBullet = null;
 
         switch (direction) {
             case UP:
                 bx = x + width/2; by = y;
+                newBullet = new Bullet(bx, by, direction);
+                newBullet.setY(by - newBullet.getHeight());
                 break;
             case DOWN:
                 bx = x + width/2; by = y + height;
+                newBullet = new Bullet(bx, by, direction);
                 break;
             case LEFT:
                 bx = x; by = y + height/2;
+                newBullet = new Bullet(bx, by, direction);
+                newBullet.setX(bx - newBullet.getWidth());
                 break;
             case RIGHT:
                 bx = x + width; by = y + height/2;
+                newBullet = new Bullet(bx, by, direction);
                 break;
             default:
                 break;
         }
-        map.addBullet(new Bullet(bx, by, direction));
+        map.addBullet(newBullet);
     }
 
     public void move() {

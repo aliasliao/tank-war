@@ -68,25 +68,32 @@ public class Tank extends MoveEntity {
 
     public void fire() {
 
-        int bx=x, by=y;
+        int bx = x, by = y;
+        Bullet newBullet = null;
 
         switch (direction) {
             case UP:
                 bx = x + width/2; by = y;
+                newBullet = new Bullet(bx, by, direction);
+                newBullet.setY(by - newBullet.getHeight());
                 break;
             case DOWN:
                 bx = x + width/2; by = y + height;
+                newBullet = new Bullet(bx, by, direction);
                 break;
             case LEFT:
                 bx = x; by = y + height/2;
+                newBullet = new Bullet(bx, by, direction);
+                newBullet.setX(bx - newBullet.getWidth());
                 break;
             case RIGHT:
                 bx = x + width; by = y + height/2;
+                newBullet = new Bullet(bx, by, direction);
                 break;
             default:
                 break;
         }
-        map.addBullet(new Bullet(bx, by, direction));
+        map.addBullet(newBullet);
     }
 
     public void keyPressed(KeyCode key) {

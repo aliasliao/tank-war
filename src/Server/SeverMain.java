@@ -3,7 +3,7 @@ package Server;
 /**
  * Created by liao on 2016/12/31.
  */
-public class Main {
+public class SeverMain {
 
     public static void main(String[] args) {
 

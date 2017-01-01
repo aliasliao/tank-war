@@ -5,16 +5,15 @@ import java.io.Serializable;
 /**
  * Created by liao on 2016/12/28.
  */
-class Frame implements Serializable {
+public class Frame implements Serializable {
 
-    enum Direction { UP, DOWN, LEFT, RIGHT }
+    public enum Direction { UP, DOWN, LEFT, RIGHT }
+    public enum WallType { WEAK, STRONG }
 
-    enum WallType { WEAK, STRONG }
-
-    class MoveObject {
-        int x;
-        int y;
-        Direction direction;
+    public class MoveObject implements Serializable {
+        public int x;
+        public int y;
+        public Direction direction;
 
         void init(int x, int y, Direction d) {
             this.x = x;
@@ -23,10 +22,10 @@ class Frame implements Serializable {
         }
     }
 
-    class Wall {
-        int x;
-        int y;
-        WallType type;
+    public class Wall implements Serializable {
+        public int x;
+        public int y;
+        public WallType type;
 
         void init(int x, int y, WallType t) {
             this.x = x;
@@ -35,12 +34,12 @@ class Frame implements Serializable {
         }
     }
 
-    MoveObject tank1, tank2;
-    MoveObject[] zombies;
-    MoveObject[] bullets;
-    Wall[] walls;
+    public MoveObject tank1, tank2;
+    public MoveObject[] zombies;
+    public MoveObject[] bullets;
+    public Wall[] walls;
 
-    Frame(int zn, int bn, int wn) {
+    public Frame(int zn, int bn, int wn) {
         tank1 = new MoveObject();
         tank2 = new MoveObject();
 

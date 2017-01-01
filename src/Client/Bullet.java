@@ -1,5 +1,7 @@
 package Client;
 
+import Server.Frame;
+
 /**
  * Created by liao on 2016/12/31.
  */
@@ -9,7 +11,7 @@ public class Bullet extends MoveEntity {
 
         x = bullet.x;
         y = bullet.y;
-        direction = Direction.valueOf(direction.toString());
+        direction = Direction.valueOf(bullet.direction.toString());
 
         loadImage();
     }

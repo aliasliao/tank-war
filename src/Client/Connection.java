@@ -1,5 +1,6 @@
 package Client;
 
+import Server.Frame;
 import Server.GameMap;
 
 import java.io.ObjectInputStream;
@@ -26,8 +27,8 @@ public class Connection implements Runnable {
             Socket socket = new Socket(ip, port);
             System.out.println("Connected!");
 
-            input = new ObjectInputStream(socket.getInputStream());
             output = new ObjectOutputStream(socket.getOutputStream());
+            input = new ObjectInputStream(socket.getInputStream());
 
             Thread recvThread = new Thread(this);
             recvThread.start();

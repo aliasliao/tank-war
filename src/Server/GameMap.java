@@ -1,9 +1,14 @@
 package Server;
 
+import Client.KeySignal;
+
 import java.awt.Rectangle;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by liao on 2016/12/27.
@@ -22,15 +27,17 @@ public class GameMap implements Runnable {
     private ObjectOutputStream output1, output2;
     private Thread animator;
     private boolean inGame;
+    private Lock bulletsLock;
 
     public GameMap() {
 
-        tank1 = new Tank(0, 480, Direction.UP, this);
-        tank2 = new Tank(480, 0, Direction.DOWN, this);
+        tank1 = new Tank(20, 460, Direction.UP, this);
+        tank2 = new Tank(460, 20, Direction.DOWN, this);
         walls = new ArrayList<>();
         zombies = new ArrayList<>();
         bullets = new ArrayList<>();
         inGame = true;
+        bulletsLock = new ReentrantLock();
 
         for (int i=0; i<5; i++)
             walls.add(new Wall(240, 20*i, WallType.WEAK));
@@ -63,42 +70,54 @@ public class GameMap implements Runnable {
 
     private void handleCollisons() {
 
-        for (Bullet b : bullets) {
+        bulletsLock.lock();
+
+        for (Iterator<Bullet> bi = bullets.iterator(); bi.hasNext();) {
+            Bullet b = bi.next();
             Rectangle bBound = b.getBounds();
 
             if (bBound.intersects(tank1.getBounds()) || bBound.intersects(tank2.getBounds()))
                 inGame = false;
 
-            for (Zombie z : zombies) {
+            for (Iterator<Zombie> zi = zombies.iterator(); zi.hasNext();) {
+                Zombie z = zi.next();
                 if (bBound.intersects(z.getBounds())) {
-                    bullets.remove(b);
-                    zombies.remove(z);
+                    try { bi.remove(); } catch (java.lang.IllegalStateException e) {}
+                    zi.remove();
                 }
             }
 
-            for (Wall w : walls) {
+            for (Iterator<Wall> wi = walls.iterator(); wi.hasNext();) {
+                Wall w = wi.next();
                 if (bBound.intersects(w.getBounds())) {
-                    bullets.remove(b);
+                    try { bi.remove(); } catch (java.lang.IllegalStateException e) {}
                     if (w.getType() == WallType.WEAK)
-                        walls.remove(w);
+                        wi.remove();
                 }
             }
 
             if (b.getX()<0 || b.getX()+b.getWidth()>MAP_X
                     || b.getY()<0 || b.getY()+b.getHeight()>MAP_Y)
-                bullets.remove(b);
+                try { bi.remove(); } catch (java.lang.IllegalStateException e) {}
         }
+
+        bulletsLock.unlock();
     }
 
     public void addBullet(Bullet bullet) {
 
+        bulletsLock.lock();
+
         bullets.add(bullet);
+
+        bulletsLock.unlock();
     }
 
     public boolean isBlocked(MoveEntity entity) {
 
         HashSet<Rectangle> obstacles = new HashSet<>();
-        Rectangle bound = entity.getFutureBound();
+        Rectangle fbound = entity.getFutureBound();
+        Rectangle nbound = entity.getBounds();
 
         obstacles.add(tank1.getBounds());
         obstacles.add(tank2.getBounds());
@@ -107,12 +126,15 @@ public class GameMap implements Runnable {
         for (Entity e : walls)
             obstacles.add(e.getBounds());
 
+        obstacles.remove(nbound);
+
         for (Rectangle r : obstacles) {
-            if (bound.intersects(r) && !bound.equals(r))
+            if (fbound.intersects(r))
                 return true;
         }
-        return entity.getX() < 0 || entity.getX() + entity.getWidth() > MAP_X
-                || entity.getY() < 0 || entity.getY() + entity.getHeight() > MAP_Y;
+        if (fbound.getX()<0 || fbound.getX() + fbound.getWidth() > MAP_X || fbound.getY() < 0 || fbound.getY() + fbound.getHeight() > MAP_Y)
+            return true;
+        else return false;
 
     }
 
@@ -185,19 +207,19 @@ public class GameMap implements Runnable {
 
         Frame frame = new Frame(zombies.size(), bullets.size(), walls.size());
 
-        frame.tank1.init(tank1.getX(), tank1.getY(), Frame.Direction.valueOf(tank1.getDirection().toString()));
-        frame.tank2.init(tank2.getX(), tank2.getY(), Frame.Direction.valueOf(tank2.getDirection().toString()));
+        frame.tank1.init(tank1.getX(), tank1.getY(), Frame.Direction.valueOf(tank1.getDirection().name()));
+        frame.tank2.init(tank2.getX(), tank2.getY(), Frame.Direction.valueOf(tank2.getDirection().name()));
         for (int i=0; i<zombies.size(); i++) {
             Zombie z = zombies.get(i);
-            frame.zombies[i].init(z.getX(), z.getY(), Frame.Direction.valueOf(z.getDirection().toString()));
+            frame.zombies[i].init(z.getX(), z.getY(), Frame.Direction.valueOf(z.getDirection().name()));
         }
         for (int i=0; i<bullets.size(); i++) {
             Bullet b = bullets.get(i);
-            frame.bullets[i].init(b.getX(), b.getY(), Frame.Direction.valueOf(b.getDirection().toString()));
+            frame.bullets[i].init(b.getX(), b.getY(), Frame.Direction.valueOf(b.getDirection().name()));
         }
         for (int i=0; i<walls.size(); i++) {
             Wall w = walls.get(i);
-            frame.walls[i].init(w.getX(), w.getY(), Frame.WallType.valueOf(w.getType().toString()));
+            frame.walls[i].init(w.getX(), w.getY(), Frame.WallType.valueOf(w.getType().name()));
         }
 
         try {

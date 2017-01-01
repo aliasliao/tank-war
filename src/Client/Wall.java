@@ -1,5 +1,6 @@
 package Client;
 
+import Server.Frame;
 import javax.swing.ImageIcon;
 
 /**

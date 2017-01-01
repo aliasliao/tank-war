@@ -1,5 +1,7 @@
 package Client;
 
+import Server.Frame;
+
 /**
  * Created by liao on 2016/12/31.
  */
@@ -12,7 +14,6 @@ public class Tank extends MoveEntity {
         direction = Direction.valueOf(tank.direction.toString());
 
         loadImage();
-
     }
 
     @Override

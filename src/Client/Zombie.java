@@ -1,5 +1,7 @@
 package Client;
 
+import Server.Frame;
+
 /**
  * Created by liao on 2016/12/31.
  */
@@ -9,7 +11,7 @@ public class Zombie extends MoveEntity {
 
         x = zombie.x;
         y = zombie.y;
-        direction = Direction.valueOf(direction.toString());
+        direction = Direction.valueOf(zombie.direction.toString());
 
         loadImage();
     }

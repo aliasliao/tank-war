@@ -1,5 +1,7 @@
 package Server;
 
+import Client.KeySignal;
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -26,16 +28,16 @@ public class Connection {
             System.out.println("Waiting for player 1...");
             Socket clientSocket1 = serverSocket.accept();
             System.out.println("Player 1 is connected!");
+            output1 = new ObjectOutputStream(clientSocket1.getOutputStream()); // order!!!
             input1 = new ObjectInputStream(clientSocket1.getInputStream());
-            output1 = new ObjectOutputStream(clientSocket1.getOutputStream());
             Thread client1 = new Thread(new Task1(input1));
             client1.start();
 
             System.out.println("Waiting for player 2...");
             Socket clientSocket2 = serverSocket.accept();
             System.out.println("Player 2 is connected!");
-            input2 = new ObjectInputStream(clientSocket2.getInputStream());
             output2 = new ObjectOutputStream(clientSocket2.getOutputStream());
+            input2 = new ObjectInputStream(clientSocket2.getInputStream());
             Thread client2 = new Thread(new Task2(input2));
             client2.start();
 
@@ -50,9 +52,7 @@ public class Connection {
 
         private ObjectInputStream input;
 
-        public Task1(ObjectInputStream input) {
-            this.input =  input;
-        }
+        public Task1(ObjectInputStream input1) { this.input =  input1; }
 
         @Override
         public void run() {
@@ -72,9 +72,7 @@ public class Connection {
 
         private ObjectInputStream input;
 
-        public Task2(ObjectInputStream input) {
-            this.input =  input;
-        }
+        public Task2(ObjectInputStream input2) { this.input =  input2; }
 
         @Override
         public void run() {
