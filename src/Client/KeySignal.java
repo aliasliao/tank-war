@@ -1,5 +1,7 @@
 package Client;
 
+import Server.KeyCode;
+
 import java.io.Serializable;
 
 /**
@@ -12,4 +14,9 @@ public class KeySignal implements Serializable {
 
     public KeyType type;
     public KeyCode code;
+
+    public KeySignal(KeyType type, KeyCode code) {
+        this.type = type;
+        this.code = code;
+    }
 }

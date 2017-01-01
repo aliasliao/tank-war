@@ -45,6 +45,10 @@ public class GameMap implements Runnable {
             walls.add(new Wall(240, 20*i, WallType.STRONG));
         for (int i=20; i<25; i++)
             walls.add(new Wall(240, 20*i, WallType.WEAK));
+        walls.add(new Wall(80, 480, WallType.STRONG));
+        walls.add(new Wall(300, 0, WallType.STRONG));
+        walls.add(new Wall(420, 480, WallType.STRONG));
+        walls.add(new Wall(200, 0, WallType.STRONG));
         zombies.add(new Zombie(220, 0, Direction.DOWN, this));
         zombies.add(new Zombie(260, 480, Direction.UP, this));
         zombies.add(new Zombie(120, 120, Direction.DOWN, this));

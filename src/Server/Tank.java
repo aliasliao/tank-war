@@ -12,6 +12,7 @@ public class Tank extends MoveEntity {
 
     private GameMap map;
     private HashMap<Direction, Image> imageMap;
+    private final int MAXSPEED = 2;
 
     public Tank(int x, int y, Direction direction, GameMap map) {
 
@@ -105,22 +106,22 @@ public class Tank extends MoveEntity {
             case UP:
                 direction = Direction.UP;
                 loadImage();
-                speed = 1;
+                speed = MAXSPEED;
                 break;
             case DOWN:
                 direction = Direction.DOWN;
                 loadImage();
-                speed = 1;
+                speed = MAXSPEED;
                 break;
             case LEFT:
                 direction = Direction.LEFT;
                 loadImage();
-                speed = 1;
+                speed = MAXSPEED;
                 break;
             case RIGHT:
                 direction = Direction.RIGHT;
                 loadImage();
-                speed = 1;
+                speed = MAXSPEED;
                 break;
             default:
                 break;

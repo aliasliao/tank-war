@@ -15,7 +15,7 @@ public class Bullet extends MoveEntity {
         this.y = y;
         this.direction = direction;
 
-        speed = 2;
+        speed = 3;
 
         loadImage();
     }

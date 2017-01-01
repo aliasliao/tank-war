@@ -59,37 +59,31 @@ public class GameBoard extends JPanel {
 
     private class KeyHandler extends KeyAdapter {
 
-        private KeySignal ks;
-
-        public KeyHandler() {
-
-            ks = new KeySignal();
-        }
+        KeySignal ks = null;
 
         @Override
         public void keyPressed(KeyEvent e) {
 
-            ks.type = KeySignal.KeyType.PRESS;
             try {
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_UP:
-                        ks.code = KeySignal.KeyCode.UP;
+                        ks = new KeySignal(KeySignal.KeyType.PRESS, KeySignal.KeyCode.UP);
                         output.writeObject(ks);
                         break;
                     case KeyEvent.VK_DOWN:
-                        ks.code = KeySignal.KeyCode.DOWN;
+                        ks = new KeySignal(KeySignal.KeyType.PRESS, KeySignal.KeyCode.DOWN);
                         output.writeObject(ks);
                         break;
                     case KeyEvent.VK_LEFT:
-                        ks.code = KeySignal.KeyCode.LEFT;
+                        ks = new KeySignal(KeySignal.KeyType.PRESS, KeySignal.KeyCode.LEFT);
                         output.writeObject(ks);
                         break;
                     case KeyEvent.VK_RIGHT:
-                        ks.code = KeySignal.KeyCode.RIGHT;
+                        ks = new KeySignal(KeySignal.KeyType.PRESS, KeySignal.KeyCode.RIGHT);
                         output.writeObject(ks);
                         break;
                     case KeyEvent.VK_SPACE:
-                        ks.code = KeySignal.KeyCode.SPACE;
+                        ks = new KeySignal(KeySignal.KeyType.PRESS, KeySignal.KeyCode.SPACE);
                         output.writeObject(ks);
                         break;
                     default:
@@ -103,23 +97,22 @@ public class GameBoard extends JPanel {
         @Override
         public void keyReleased(KeyEvent e) {
 
-            ks.type = KeySignal.KeyType.RELEASE;
             try {
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_UP:
-                        ks.code = KeySignal.KeyCode.UP;
+                        ks = new KeySignal(KeySignal.KeyType.RELEASE, KeySignal.KeyCode.UP);
                         output.writeObject(ks);
                         break;
                     case KeyEvent.VK_DOWN:
-                        ks.code = KeySignal.KeyCode.DOWN;
+                        ks = new KeySignal(KeySignal.KeyType.RELEASE, KeySignal.KeyCode.DOWN);
                         output.writeObject(ks);
                         break;
                     case KeyEvent.VK_LEFT:
-                        ks.code = KeySignal.KeyCode.LEFT;
+                        ks = new KeySignal(KeySignal.KeyType.RELEASE, KeySignal.KeyCode.LEFT);
                         output.writeObject(ks);
                         break;
                     case KeyEvent.VK_RIGHT:
-                        ks.code = KeySignal.KeyCode.RIGHT;
+                        ks = new KeySignal(KeySignal.KeyType.RELEASE, KeySignal.KeyCode.RIGHT);
                         output.writeObject(ks);
                         break;
                     default:

@@ -12,7 +12,7 @@ public class Zombie extends MoveEntity {
 
     private GameMap map;
     private HashMap<Direction, Image> imageMap;
-    private final int fireSpeed = 40; // dps=40/fs
+    private final int fireSpeed = 60; // dps=40/fs
     private int count = 0;
 
     public Zombie(int x, int y, Direction direction, GameMap map) {
