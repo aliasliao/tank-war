@@ -48,7 +48,7 @@ public class Tank extends MoveEntity {
 
     private String getImageName(Direction d) {
 
-        return "img/tank_" + d.toString().toLowerCase() + ".png";
+        return getClass().getResource("/img/tank_" + d.toString().toLowerCase() + ".png").getFile();
     }
 
     public void move() { // each frame

@@ -19,6 +19,6 @@ public class Tank extends MoveEntity {
     @Override
     protected String getImageName() {
 
-        return "img/tank_" + direction.toString().toLowerCase() + ".png";
+        return getClass().getResource("/img/tank_" + direction.toString().toLowerCase() + ".png").getFile();
     }
 }

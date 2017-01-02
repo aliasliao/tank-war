@@ -30,7 +30,7 @@ public class Wall extends Entity {
 
     private String getImageName() {
 
-        return "img/wall_" + type.toString().toLowerCase() + ".png";
+        return getClass().getResource("/img/wall_" + type.toString().toLowerCase() + ".png").getFile();
     }
 
     public WallType getType() { return type; }

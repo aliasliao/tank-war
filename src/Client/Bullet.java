@@ -19,6 +19,6 @@ public class Bullet extends MoveEntity {
     @Override
     protected String getImageName() {
 
-        return "img/bullet_" + direction.toString().toLowerCase() + ".png";
+        return getClass().getResource("/img/bullet_" + direction.toString().toLowerCase() + ".png").getFile();
     }
 }

@@ -21,7 +21,7 @@ public class Wall extends Entity {
 
     private void loadImage() {
 
-        String imName = "img/wall_" + type.toString().toLowerCase() + ".png";
+        String imName = getClass().getResource("/img/wall_" + type.toString().toLowerCase() + ".png").getFile();
         ImageIcon ii = new ImageIcon(imName);
         image = ii.getImage();
     }
