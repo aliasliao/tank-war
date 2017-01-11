@@ -33,7 +33,7 @@ public class Tank extends MoveEntity {
         ImageIcon ii;
 
         for (Direction d : Direction.values()) {
-            ii = new ImageIcon(getImageName(direction));
+            ii = new ImageIcon(getImageName(d));
             im = ii.getImage();
             imageMap.put(d, im);
         }
@@ -48,7 +48,8 @@ public class Tank extends MoveEntity {
 
     private String getImageName(Direction d) {
 
-        return getClass().getResource("/img/tank_" + d.toString().toLowerCase() + ".png").getFile();
+//        String s =  getClass().getResource("/img/tank_" + d.toString().toLowerCase() + ".png").getPath();
+        return "img/tank_" + d.name().toLowerCase() + ".png";
     }
 
     public void move() { // each frame

@@ -19,6 +19,7 @@ public class Zombie extends MoveEntity {
     @Override
     protected String getImageName() {
 
-        return getClass().getResource("/img/zombie_" + direction.toString().toLowerCase() + ".png").getFile();
+//        return getClass().getResource("/img/zombie_" + direction.toString().toLowerCase() + ".png").getFile();
+        return "img/zombie_" + direction.name().toLowerCase() + ".png";
     }
 }

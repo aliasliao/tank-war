@@ -30,7 +30,8 @@ public class Bullet extends MoveEntity {
 
     private String getImageName() {
 
-        return getClass().getResource("/img/bullet_" + direction.toString().toLowerCase() + ".png").getFile();
+//        return getClass().getResource("/img/bullet_" + direction.toString().toLowerCase() + ".png").getFile();
+        return "img/bullet_" + direction.name().toLowerCase() + ".png";
     }
 
     public Direction getDirection() { return direction; }
