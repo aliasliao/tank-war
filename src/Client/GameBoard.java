@@ -25,6 +25,8 @@ public class GameBoard extends JPanel {
     private final int BOARD_W = 500;
     private final int BOARD_H = 500;
 
+    private MsgBoard msgBoard;
+
     @Override
     public void paintComponent(Graphics g) {
 
@@ -44,7 +46,9 @@ public class GameBoard extends JPanel {
         Toolkit.getDefaultToolkit().sync();
     }
 
-    public GameBoard() {
+    public GameBoard(MsgBoard msgBoard) {
+
+        this.msgBoard = msgBoard;
 
         addKeyListener(new KeyHandler());
         setFocusable(true);
@@ -129,6 +133,8 @@ public class GameBoard extends JPanel {
     }
 
     public void handleFrame(Frame frame) {
+
+        msgBoard.updateMsg(frame.msg);
 
         if (!gameStart)
             gameStart = true;

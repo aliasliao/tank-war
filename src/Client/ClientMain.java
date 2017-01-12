@@ -2,6 +2,7 @@ package Client;
 
 import javax.swing.JFrame;
 
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 /**
@@ -9,9 +10,16 @@ import java.awt.EventQueue;
  */
 public class ClientMain extends JFrame {
 
+    private GameBoard gameBoard;
+    private MsgBoard msgBoard;
+
     public ClientMain() {
 
-        add(new GameBoard());
+        msgBoard = new MsgBoard();
+        gameBoard = new GameBoard(msgBoard);
+
+        add(msgBoard, BorderLayout.SOUTH);
+        add(gameBoard, BorderLayout.NORTH);
         setResizable(false);
         pack();
         setTitle("Tank War");

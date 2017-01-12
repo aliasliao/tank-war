@@ -35,6 +35,8 @@ public class GameMap implements Runnable {
 
     private boolean isReady1, isReady2;
 
+    private String msg1, msg2;
+
     public GameMap() {
 
         inGame = true;
@@ -106,8 +108,16 @@ public class GameMap implements Runnable {
             Bullet b = bi.next();
             Rectangle bBound = b.getBounds();
 
-            if (bBound.intersects(tank1.getBounds()) || bBound.intersects(tank2.getBounds()))
+            if (bBound.intersects(tank1.getBounds())) {
                 inGame = false;
+                msg1 = "Defeat !  Press <Enter> to restart.";
+                msg2 = "Victory !  Press <Enter> to restart.";
+            }
+            if (bBound.intersects(tank2.getBounds())) {
+                inGame = false;
+                msg1 = "Victory ! Press <Enter> to restart.";
+                msg2 = "Defeat !  Press <Enter> to restart.";
+            }
 
             for (Iterator<Zombie> zi = zombies.iterator(); zi.hasNext();) {
                 Zombie z = zi.next();
@@ -177,6 +187,9 @@ public class GameMap implements Runnable {
                 switch (keyCode) {
                     case ENTER:
                         isReady1 = true;
+                        msg1 = "Waiting for palyer 2...";
+                        msg2 = "Player 1 is ready. Press <Enter> to restart.";
+                        sendFrame();
                         break;
                     default:
                         if (inGame)
@@ -202,6 +215,9 @@ public class GameMap implements Runnable {
                 switch (keyCode) {
                     case ENTER:
                         isReady2 = true;
+                        msg1 = "Player 2 is ready. Press <Enter> to restart.";
+                        msg2 = "Waiting for palyer 1...";
+                        sendFrame();
                         break;
                     default:
                         if (inGame)
@@ -222,6 +238,10 @@ public class GameMap implements Runnable {
 
         if (!inGame) {
             animator.interrupt();
+        }
+        else {
+            msg1 = "Game is running...";
+            msg2 = "Game is running...";
         }
     }
 
@@ -306,6 +326,7 @@ public class GameMap implements Runnable {
         try {
             if (!clientSocket1.isClosed()) {
                 try {
+                    frame.setMsg(msg1);
                     output1.writeObject(frame);
                 } catch (SocketException e) {
                     System.out.println("send frame: Player 1 has diconnected!");
@@ -315,6 +336,7 @@ public class GameMap implements Runnable {
 
             if (!clientSocket2.isClosed()) {
                 try {
+                    frame.setMsg(msg2);
                     output2.writeObject(frame);
                 } catch (SocketException e) {
                     System.out.println("send frame: Player 2 has diconnected!");

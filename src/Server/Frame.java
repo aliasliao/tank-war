@@ -38,6 +38,7 @@ public class Frame implements Serializable {
     public MoveObject[] zombies;
     public MoveObject[] bullets;
     public Wall[] walls;
+    public String msg;
 
     public Frame(int zn, int bn, int wn) {
         tank1 = new MoveObject();
@@ -53,5 +54,9 @@ public class Frame implements Serializable {
             bullets[i] = new MoveObject();
         for (int i=0; i<wn; i++)
             walls[i] = new Wall();
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 }
