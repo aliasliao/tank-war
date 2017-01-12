@@ -14,8 +14,8 @@ import java.net.SocketException;
  */
 public class Connection implements Runnable {
 
-//    private final String ip = "123.206.186.94";
-    private final String ip = "localhost";
+    private final String ip = "123.206.186.94";
+//    private final String ip = "localhost";
     private final int port = 4396;
     private ObjectInputStream input;
     private ObjectOutputStream output;
