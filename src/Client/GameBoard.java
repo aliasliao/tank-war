@@ -86,6 +86,10 @@ public class GameBoard extends JPanel {
                         ks = new KeySignal(KeySignal.KeyType.PRESS, KeySignal.KeyCode.SPACE);
                         output.writeObject(ks);
                         break;
+                    case KeyEvent.VK_ENTER:
+                        ks = new KeySignal(KeySignal.KeyType.PRESS, KeySignal.KeyCode.ENTER);
+                        output.writeObject(ks);
+                        break;
                     default:
                         break;
                 }

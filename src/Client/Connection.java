@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  * Created by liao on 2016/12/31.
@@ -47,6 +48,9 @@ public class Connection implements Runnable {
             try {
                 frame = (Frame) input.readObject();
                 board.handleFrame(frame);
+            } catch (SocketException e) {
+                System.out.println("Server has stopped running!");
+                return;
             } catch (Exception e) {
                 e.printStackTrace();
             }

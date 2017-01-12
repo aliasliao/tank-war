@@ -10,7 +10,7 @@ import java.io.Serializable;
 public class KeySignal implements Serializable {
 
     public enum KeyType { PRESS, RELEASE }
-    public enum KeyCode { UP, DOWN, LEFT, RIGHT, SPACE }
+    public enum KeyCode { UP, DOWN, LEFT, RIGHT, SPACE, ENTER }
 
     public KeyType type;
     public KeyCode code;

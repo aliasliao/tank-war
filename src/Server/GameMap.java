@@ -4,9 +4,13 @@ import Client.KeySignal;
 
 import java.awt.Rectangle;
 import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.concurrent.Exchanger;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -29,15 +33,44 @@ public class GameMap implements Runnable {
     private boolean inGame;
     private Lock bulletsLock;
 
+    private boolean isReady1, isReady2;
+
     public GameMap() {
+
+        inGame = true;
+        bulletsLock = new ReentrantLock();
+
+/*        for (int i=0; i<5; i++)
+            walls.add(new Wall(240, 20*i, WallType.WEAK));
+        for (int i=10; i<15; i++)
+            walls.add(new Wall(240, 20*i, WallType.STRONG));
+        for (int i=20; i<25; i++)
+            walls.add(new Wall(240, 20*i, WallType.WEAK));
+        walls.add(new Wall(80, 480, WallType.STRONG));
+        walls.add(new Wall(300, 0, WallType.STRONG));
+        walls.add(new Wall(420, 480, WallType.STRONG));
+        walls.add(new Wall(200, 0, WallType.STRONG));
+        zombies.add(new Zombie(220, 0, Direction.DOWN, this));
+        zombies.add(new Zombie(260, 480, Direction.UP, this));
+        zombies.add(new Zombie(120, 120, Direction.DOWN, this));
+        zombies.add(new Zombie(400, 400, Direction.DOWN, this));*/
+        initGameMap();
+
+        connection = new Connection(this);
+        output1 = connection.getOutput1();
+        output2 = connection.getOutput2();
+
+        animator = new Thread(this);
+        animator.start();
+    }
+
+    private void initGameMap() {
 
         tank1 = new Tank(20, 460, Direction.UP, this);
         tank2 = new Tank(460, 20, Direction.DOWN, this);
         walls = new ArrayList<>();
         zombies = new ArrayList<>();
         bullets = new ArrayList<>();
-        inGame = true;
-        bulletsLock = new ReentrantLock();
 
         for (int i=0; i<5; i++)
             walls.add(new Wall(240, 20*i, WallType.WEAK));
@@ -53,13 +86,6 @@ public class GameMap implements Runnable {
         zombies.add(new Zombie(260, 480, Direction.UP, this));
         zombies.add(new Zombie(120, 120, Direction.DOWN, this));
         zombies.add(new Zombie(400, 400, Direction.DOWN, this));
-
-        connection = new Connection(this);
-        output1 = connection.getOutput1();
-        output2 = connection.getOutput2();
-
-        animator = new Thread(this);
-        animator.start();
     }
 
     private void moveObject() {
@@ -86,7 +112,7 @@ public class GameMap implements Runnable {
             for (Iterator<Zombie> zi = zombies.iterator(); zi.hasNext();) {
                 Zombie z = zi.next();
                 if (bBound.intersects(z.getBounds())) {
-                    try { bi.remove(); } catch (java.lang.IllegalStateException e) {}
+                    try { bi.remove(); } catch (java.lang.IllegalStateException ignored) {}
                     zi.remove();
                 }
             }
@@ -94,7 +120,7 @@ public class GameMap implements Runnable {
             for (Iterator<Wall> wi = walls.iterator(); wi.hasNext();) {
                 Wall w = wi.next();
                 if (bBound.intersects(w.getBounds())) {
-                    try { bi.remove(); } catch (java.lang.IllegalStateException e) {}
+                    try { bi.remove(); } catch (java.lang.IllegalStateException ignored) {}
                     if (w.getType() == WallType.WEAK)
                         wi.remove();
                 }
@@ -102,7 +128,7 @@ public class GameMap implements Runnable {
 
             if (b.getX()<0 || b.getX()+b.getWidth()>MAP_X
                     || b.getY()<0 || b.getY()+b.getHeight()>MAP_Y)
-                try { bi.remove(); } catch (java.lang.IllegalStateException e) {}
+                try { bi.remove(); } catch (java.lang.IllegalStateException ignored) {}
         }
 
         bulletsLock.unlock();
@@ -148,10 +174,19 @@ public class GameMap implements Runnable {
 
         switch (key.type) {
             case PRESS:
-                tank1.keyPressed(keyCode);
+                switch (keyCode) {
+                    case ENTER:
+                        isReady1 = true;
+                        break;
+                    default:
+                        if (inGame)
+                            tank1.keyPressed(keyCode);
+                        break;
+                }
                 break;
             case RELEASE:
-                tank1.keyReleased(keyCode);
+                if (inGame)
+                    tank1.keyReleased(keyCode);
                 break;
             default:
                 break;
@@ -164,10 +199,19 @@ public class GameMap implements Runnable {
 
         switch (key.type) {
             case PRESS:
-                tank2.keyPressed(keyCode);
+                switch (keyCode) {
+                    case ENTER:
+                        isReady2 = true;
+                        break;
+                    default:
+                        if (inGame)
+                            tank2.keyPressed(keyCode);
+                        break;
+                }
                 break;
             case RELEASE:
-                tank2.keyReleased(keyCode);
+                if (inGame)
+                    tank2.keyReleased(keyCode);
                 break;
             default:
                 break;
@@ -176,8 +220,9 @@ public class GameMap implements Runnable {
 
     private void inGame() {
 
-        if (!inGame)
+        if (!inGame) {
             animator.interrupt();
+        }
     }
 
     @Override
@@ -200,7 +245,37 @@ public class GameMap implements Runnable {
             try {
                 Thread.sleep(sleep);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                System.out.println("Game over");
+
+                initGameMap();
+                isReady1 = isReady2 = false;
+//                if (connection.isReady1() && connection.isReady2()) { //wait r1, wait r2
+//                    System.out.println("Restart!");
+//                    break;
+//                }
+/*                new Thread(() -> {
+                    readyLock1.lock();
+                    while (!isReady1)
+                        try { ready1.await(); } catch (Exception e1) { e1.printStackTrace(); }
+                    readyLock1.unlock();
+                }).start();
+
+                new Thread(() -> {
+                    readyLock2.lock();
+                    while (!isReady2)
+                        try { ready2.await(); } catch (Exception e2) { e2.printStackTrace(); }
+                    readyLock2.unlock();
+                }).start();*/
+
+                while (!isReady1 || !isReady2) {
+                    try {
+                        Thread.sleep(20);
+                    } catch (Exception ee) {
+                        ee.printStackTrace();
+                    }
+                }
+
+                inGame = true;
             }
 
             beforeTime = System.currentTimeMillis();
@@ -210,6 +285,8 @@ public class GameMap implements Runnable {
     private void sendFrame() {
 
         Frame frame = new Frame(zombies.size(), bullets.size(), walls.size());
+        Socket clientSocket1 = connection.getClientSocket1();
+        Socket clientSocket2 = connection.getClientSocket2();
 
         frame.tank1.init(tank1.getX(), tank1.getY(), Frame.Direction.valueOf(tank1.getDirection().name()));
         frame.tank2.init(tank2.getX(), tank2.getY(), Frame.Direction.valueOf(tank2.getDirection().name()));
@@ -227,8 +304,23 @@ public class GameMap implements Runnable {
         }
 
         try {
-            output1.writeObject(frame);
-            output2.writeObject(frame);
+            if (!clientSocket1.isClosed()) {
+                try {
+                    output1.writeObject(frame);
+                } catch (SocketException e) {
+                    System.out.println("send frame: Player 1 has diconnected!");
+                    clientSocket1.close();
+                }
+            }
+
+            if (!clientSocket2.isClosed()) {
+                try {
+                    output2.writeObject(frame);
+                } catch (SocketException e) {
+                    System.out.println("send frame: Player 2 has diconnected!");
+                    clientSocket2.close();
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  * Created by liao on 2016/12/28.
@@ -14,6 +15,8 @@ public class Connection {
 
     final private int port =  4396;
     final private int backlog = 2;
+    private Socket clientSocket1;
+    private Socket clientSocket2;
     private ObjectInputStream input1, input2;
     private ObjectOutputStream output1, output2;
     private GameMap map;
@@ -26,7 +29,7 @@ public class Connection {
             ServerSocket serverSocket = new ServerSocket(port, backlog);
 
             System.out.println("Waiting for player 1...");
-            Socket clientSocket1 = serverSocket.accept();
+            clientSocket1 = serverSocket.accept();
             System.out.println("Player 1 is connected!");
             output1 = new ObjectOutputStream(clientSocket1.getOutputStream()); // order!!!
             input1 = new ObjectInputStream(clientSocket1.getInputStream());
@@ -34,7 +37,7 @@ public class Connection {
             client1.start();
 
             System.out.println("Waiting for player 2...");
-            Socket clientSocket2 = serverSocket.accept();
+            clientSocket2 = serverSocket.accept();
             System.out.println("Player 2 is connected!");
             output2 = new ObjectOutputStream(clientSocket2.getOutputStream());
             input2 = new ObjectInputStream(clientSocket2.getInputStream());
@@ -62,6 +65,9 @@ public class Connection {
                 try {
                     keySignal = (KeySignal) input.readObject();
                     map.handleKey1(keySignal);
+                } catch (SocketException e) {
+                    System.out.println("get signal: Player 1 has disconnected!");
+                    return;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -82,6 +88,9 @@ public class Connection {
                 try {
                     keySignal = (KeySignal) input.readObject();
                     map.handleKey2(keySignal);
+                } catch (SocketException e) {
+                    System.out.println("get signal: Player 2 has disconnected!");
+                    return;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -92,4 +101,8 @@ public class Connection {
     public ObjectOutputStream getOutput1() { return output1; }
 
     public ObjectOutputStream getOutput2() { return output2; }
+
+    public Socket getClientSocket1() { return clientSocket1; }
+
+    public Socket getClientSocket2() { return clientSocket2; }
 }
